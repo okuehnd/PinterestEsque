@@ -1,24 +1,8 @@
 import React from 'react';
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Container,
-  Grid,
-  Card,
-  CardActionArea,
-  CardContent,
-  CardMedia,
-  CssBaseline,
-} from '@mui/material';
-import { makeStyles } from '@mui/styles';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import './App.css'
 // import './style.css'
-import { useNavigate, Link } from 'react-router-dom';
-import AddIcon from '@mui/icons-material/Add';
-import { IconButton } from '@mui/material';
-import axios from 'axios';
+import { useNavigate} from 'react-router-dom';
 
 function LoginPage() {
   const [username, setUsername] = useState('');
@@ -47,7 +31,7 @@ function LoginPage() {
       const data = await response.json();
       localStorage.setItem('access', data.access);
       localStorage.setItem('refresh', data.refresh);
-      localStorage.setItem('userId',data.userId)
+      localStorage.setItem('userId',data.userId);
       alert('Login successful!');
       navigate('/following/')
     } catch (err) {
@@ -83,14 +67,3 @@ function LoginPage() {
 }
 
 export default LoginPage;
-
-
-
-// fetch('http://localhost:8000/api/profile/', {
-//     method: 'GET',
-//     headers: {
-//       'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-//     }
-//   })
-//   .then(response => response.json())
-//   .then(data => console.log(data));

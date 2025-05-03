@@ -1,31 +1,13 @@
 import React from 'react';
 import {
-  AppBar,
-  Toolbar,
   Typography,
-  Container,
   Box,
-  Grid,
-  Card,
-  CardActionArea,
-  CardContent,
-  CardMedia,
-  CssBaseline,
   Modal,
   TextField
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { styled } from '@mui/material/styles';
 import './App.css'
-// import './style.css'
-import { useNavigate, Link } from 'react-router-dom';
-import AddIcon from '@mui/icons-material/Add';
-import { IconButton } from '@mui/material';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import axios from 'axios';
-import PinCard from './PinCard';
-import CommentCard from './CommentCard';
 
 const FormLabel = styled('label')({
     fontWeight: 'bold',

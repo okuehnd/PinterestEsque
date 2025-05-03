@@ -1,36 +1,15 @@
 import React from 'react';
 import {
-  AppBar,
-  Toolbar,
   Checkbox,
   Button,
   Typography,
-  Container,
   Box,
-  Grid,
-  Card,
-  CardActionArea,
-  CardContent,
-  CardMedia,
-  CssBaseline,
   Modal,
   FormLabel,
   FormControlLabel,
-  Fab
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
 import { useState, useEffect } from 'react';
-import { styled } from '@mui/material/styles';
 import './App.css'
-// import './style.css'
-import { useNavigate, Link } from 'react-router-dom';
-import AddIcon from '@mui/icons-material/Add';
-import { IconButton } from '@mui/material';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import axios from 'axios';
-import PinCard from './PinCard';
-import CommentCard from './CommentCard';
-import NewStreamModal from './NewStreamModal';
 
 const RepinModal = ({myBoards,pinId,open,onClose}) => {
        const userId = localStorage.getItem('userId');
@@ -67,7 +46,6 @@ const RepinModal = ({myBoards,pinId,open,onClose}) => {
            })
            .catch((err) => {
                setError(err.message);
-               console.error(err);
            });
        }
    
@@ -120,7 +98,7 @@ const RepinModal = ({myBoards,pinId,open,onClose}) => {
                       control={
                         <Checkbox
                           checked={selectedBoards.includes(board.boardId)}
-                          onChange={() => handleCheckboxChange(board.boardId)}
+                          onChange={(e) => handleCheckboxChange(e)}
                           value={board.boardId}
                           color="primary"
                         />

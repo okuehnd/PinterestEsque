@@ -2,7 +2,7 @@ import React from 'react';
 import {Box, Divider, Card, CardMedia, CardContent, Typography, IconButton } from '@mui/material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import CloseIcon from '@mui/icons-material/Close';
 import PushPinIcon from '@mui/icons-material/PushPin';
 import RepinModal from './AddToBoardModal';
@@ -12,9 +12,16 @@ const PinCard = ({ myBoards,setPins,boardId,editModeOn,pin, liked , onClick, ima
     const [error,setError] = useState(null);
     const [isRepinModalOpen,setIsRepinModalOpen] = useState(false);
     const userId = localStorage.getItem('userId')
+    const [likeCount,setLikeCount] = useState(pin.pinLikeCount);
     const navigate = useNavigate();
-    console.log("PIN OBJECT:",pin)
-    console.log("DELETE PIN TEST:",pin.pinId)
+
+    useEffect(() => {
+      setIsLiked(liked);
+    }, [liked]);
+
+    useEffect(() => {
+      setLikeCount(pin.pinLikeCount);
+    }, [pin.pinLikeCount]);
 
     const handleLike = () => {
         fetch('http://localhost:8000/api/LikePin/'+userId+'/'+pin.pinId,{
@@ -31,6 +38,7 @@ const PinCard = ({ myBoards,setPins,boardId,editModeOn,pin, liked , onClick, ima
         })
         .then((data) => {
             setIsLiked(true);
+            setLikeCount(prev => prev + 1);
         })
         .catch((err) => {
             setError(err.message);
@@ -53,6 +61,7 @@ const PinCard = ({ myBoards,setPins,boardId,editModeOn,pin, liked , onClick, ima
         })
         .then((data) => {
             setIsLiked(false);
+            setLikeCount(prev => prev - 1);
         })
         .catch((err) => {
             setError(err.message);
@@ -75,7 +84,6 @@ const PinCard = ({ myBoards,setPins,boardId,editModeOn,pin, liked , onClick, ima
             return res.json()
             })
             .then((data) => {
-            console.log("TOGGLE MESSAGE: ",data.message)
             setPins((prev) => prev.filter((option => option !== pin))) //REMOVE PIN!!!!!!!!
             
             })
@@ -205,9 +213,14 @@ const PinCard = ({ myBoards,setPins,boardId,editModeOn,pin, liked , onClick, ima
                 <PushPinIcon sx={{ color: '#89DAFF', fontSize: 28 }} />
               </IconButton>
               
-              <IconButton onClick={isLiked ? handleUnlike : handleLike} sx={{ padding: 0 }}>
-                <FavoriteIcon sx={{ color: isLiked ? 'red' : 'inherit', fontSize: 28 }} />
-              </IconButton>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <IconButton onClick={isLiked ? handleUnlike : handleLike} sx={{ padding: 0, mr: 0.5 }}>
+                  <FavoriteIcon sx={{ color: isLiked ? 'red' : 'inherit', fontSize: 28 }} />
+                </IconButton>
+                <Typography variant="body2" color="text.secondary">
+                  {likeCount}
+                </Typography>
+              </Box>
             </Box>
           </CardContent>
     

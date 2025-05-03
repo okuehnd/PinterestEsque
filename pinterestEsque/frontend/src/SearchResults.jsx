@@ -5,15 +5,18 @@ import {
   Button,
   Box,
   Grid,
+  FormControl,
+  MenuItem,
+  Select
 } from '@mui/material';
 import { useState, useEffect } from 'react';
 import './App.css'
-// import './style.css'
-import { useNavigate} from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import PinCard from './PinCard';
 import PinModal from './PinModal'
 
-function Following() {
+function SearchResults() {
+  const [error, setError] = useState('');
   const[pins,setPins] = useState([]);
   const [myBoards,setMyBoards] = useState([]);
   const userId = localStorage.getItem('userId');
@@ -21,6 +24,17 @@ function Following() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [followStreams,setFollowStreams] = useState([]);
   const [keyword,setKeyword] = useState('');
+  const [sortMethod,setSortMethod] = useState('time');
+  const location = useLocation();
+
+
+  useEffect(() => {
+    const initialKeyword = location.state?.keyword || '';
+    if (initialKeyword) {
+      setKeyword(initialKeyword);
+    }
+  }, []);
+  
   const navigate = useNavigate();
   const imageHeight = 140;
 
@@ -30,18 +44,24 @@ function Following() {
         .then((data)=>{
             setFollowStreams(data.streamData)
         })
-        .catch((error)=> console.error("Error fetching pins: ",error));
+        .catch((error)=> console.error("Error fetching follow streams: ",error));
   },[])
 
   useEffect(()=>{
-    fetch('http://localhost:8000/api/following/'+userId)
+    fetch(`http://localhost:8000/api/SearchPins/${userId}`,{
+        method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ keyword: keyword,sortMethod: sortMethod }),
+    })
         .then((res) => res.json())
         .then((data)=>{
             var pin = data.pinData
             setPins(pin)
         })
-        .catch((error)=> console.error("Error fetching pins: ",error));
-  },[])
+        .catch((error)=> console.error("Error fetching boards: ",error));
+  },[keyword,sortMethod])
 
   useEffect(()=>{
     fetch('http://localhost:8000/api/Boards/'+userId+'/'+userId)
@@ -63,11 +83,13 @@ function Following() {
     setIsModalOpen(false);
   };
 
-  const handleSearch = () =>{
-    navigate('/search-results',{state : {keyword: keyword}});
+  const handleSearch = (keyword) =>{
+    localStorage.setItem('keyword',keyword);
+    navigate('/search-results');
   };
 
-
+  
+// following
   
 return (
   <div>
@@ -84,23 +106,23 @@ return (
       }}
     >
       <Container>
-      <Box display="flex" justifyContent="flex-end" mb={2}>
-        <Button 
-          onClick={() => navigate(`/user/${localStorage.getItem('userId')}`)} 
-          variant="contained" 
-          color="primary" 
-          sx={{
-            padding: '10px 20px', 
-            fontSize: '1rem', 
-            marginBottom: '20px', 
-            borderRadius: '30px',  
-            boxShadow: 2,
-            textTransform: 'none', 
-          }}
-        >
-          My Boards
-        </Button>
-      </Box>
+        <Box display="flex" justifyContent="flex-end" mb={2}>
+          <Button 
+            onClick={() => navigate(`/user/${localStorage.getItem('userId')}`)} 
+            variant="contained" 
+            color="primary" 
+            sx={{
+              padding: '10px 20px', 
+              fontSize: '1rem', 
+              marginBottom: '2px', 
+              borderRadius: '30px',  // Rounded corners for buttons
+              boxShadow: 2,
+              textTransform: 'none',  // Prevents uppercasing of button text
+            }}
+          >
+            My Boards
+          </Button>
+        </Box>
         <Typography 
           variant="h3" 
           component="h1" 
@@ -116,6 +138,66 @@ return (
         >
           Explore, discover, and follow your favorite boards!
         </Typography>
+
+        {/* Search Input */}
+        <Box display="flex" justifyContent="center">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            const searchValue = keyword;
+            handleSearch(searchValue)
+          }}
+          style={{ width: '100%', maxWidth: '400px' }}
+        >
+            <input
+              name="search"
+              type="text"
+              placeholder="Search pins..."
+              value={keyword}
+              onChange={(e) => {setKeyword(e.target.value)}}
+              style={{
+                width: '100%',
+                maxWidth: '400px',
+                padding: '10px 16px',
+                borderRadius: '30px',
+                border: 'none',
+                fontSize: '16px',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
+                outline: 'none',
+              }}
+            />
+        </form>
+        </Box>
+        <Box display="flex" justifyContent="flex-end" mb={2}>
+        <FormControl
+            variant="outlined"
+            size="small"
+            sx={{
+              minWidth: 160,
+              borderRadius: '30px',
+              backgroundColor: 'white',
+              boxShadow: 2,
+              '.MuiOutlinedInput-root': {
+                borderRadius: '30px',
+                paddingLeft: 1,
+              },
+              '.MuiSelect-select': {
+                padding: '10px 20px',
+              },
+            }}
+          >
+            <Select
+              labelId="sort-label"
+              value={sortMethod}
+              label="Sort By"
+              onChange={(e) => setSortMethod(e.target.value)}
+            >
+              <MenuItem value="time">Most Recent</MenuItem>
+              <MenuItem value="likes">Likes</MenuItem>
+            </Select>
+          </FormControl>
+
+        </Box>
       </Container>
     </Box>
 
@@ -124,15 +206,15 @@ return (
       <Grid item>
         <Button 
           onClick={() => navigate(`/following`)} 
-          variant="contained" 
+          variant="outlined" 
           color="primary" 
           sx={{
             padding: '10px 20px', 
             fontSize: '1rem', 
             marginBottom: '20px', 
-            borderRadius: '30px',  
+            borderRadius: '30px',  // Rounded corners for buttons
             boxShadow: 2,
-            textTransform: 'none', 
+            textTransform: 'none',  // Prevents uppercasing of button text
           }}
         >
           Following
@@ -142,21 +224,20 @@ return (
       <Grid item>
         <Button 
           onClick={() => navigate('/search-results')} 
-          variant="outlined" 
+          variant="contained" 
           color="primary" 
           sx={{
             padding: '10px 20px', 
             fontSize: '1rem', 
-            marginBottom: '2px', 
-            borderRadius: '30px',  
+            marginBottom: '20px', 
+            borderRadius: '30px',  // Rounded corners for buttons
             boxShadow: 2,
-            textTransform: 'none',  
+            textTransform: 'none',  // Prevents uppercasing of button text
           }}
         >
           Search
         </Button>
       </Grid>
-      
       {/* Dynamically rendered stream buttons */}
       {followStreams.map((stream, index) => (
         <Grid key={index}>
@@ -199,4 +280,5 @@ return (
 );
 }
 
-export default Following;
+export default SearchResults;
+

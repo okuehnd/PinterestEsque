@@ -1,27 +1,17 @@
 import React from 'react';
 import {
-  AppBar,
-  Toolbar,
   Typography,
   Container,
   Grid,
-  Card,
   Box,
-  CardActionArea,
-  CardContent,
-  CardMedia,
-  CssBaseline,
   Switch,
   Fab
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
 import { useState, useEffect } from 'react';
 import './App.css'
 // import './style.css'
-import { useNavigate, Link, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
-import { IconButton } from '@mui/material';
-import axios from 'axios';
 import PinCard from './PinCard';
 import PinModal from './PinModal'
 import FollowBoardModal from './FollowModal';
@@ -34,7 +24,6 @@ function Board() {
   const { boardId } = useParams();
   const [boardOwnerUsername,setBoardOwnerUsername] = useState([]);
   const [boardOwnerId,setBoardOwnerId] = useState([]);
-  console.log("BoardID: ",boardId);
   const userId = localStorage.getItem('userId')
   const navigate = useNavigate();
   const [selectedPin, setSelectedPin] = useState(null);
@@ -46,19 +35,12 @@ function Board() {
   const [friendsOnly, setFriendsOnly] = useState(true);
   const [isFollowing,setIsFollowing] = useState(null);
   const [myBoards,setMyBoards] = useState([]);
-  console.log("OWNER: ",boardOwnerId)
-  console.log("USER: ",userId)
-  console.log("IS OWNER: ",isBoardOwner)
 
   useEffect(()=>{
     fetch('http://localhost:8000/api/Boards/'+userId+'/'+userId)
         .then((res) => res.json())
         .then((data)=>{
             var b = data.boardData
-            var bou = data.boardOwnerUsername
-            // pin = JSON.parse(pin)
-            console.log(b)
-            console.log(bou)
             setMyBoards(b)
         })
         .catch((error)=> console.error("Error fetching boards: ",error));
@@ -69,12 +51,9 @@ function Board() {
         .then((res) => res.json())
         .then((data)=>{
             var p = data.pinData
-            // pin = JSON.parse(pin)
-            console.log(data)
             setPins(p)
             setBoardName(data.boardName)
             setBoardOwnerUsername(data.boardOwnerUsername)
-            console.log("BOARD OWNER ID SET: ",data.boardOwnerId)
             setBoardOwnerId(data.boardOwnerId)
             setIsFollowing(data.isFollowing)
         })
@@ -82,13 +61,11 @@ function Board() {
   },[])
 
   const handlePinClick = (pin) =>{
-    console.log("PIN CLICK")
     setSelectedPin(pin);
     setIsModalPinOpen(true);
   };
 
   const handleFollowBoardClick = () =>{
-    console.log("FOLLOW CLICK")
     setIsFollowModalOpen(true);
   };
   
@@ -118,7 +95,6 @@ function Board() {
           return res.json()
         })
         .then((data) => {
-          console.log("TOGGLE MESSAGE: ",data.message)
           setFriendsOnly(prev => !prev)
         })
         .catch((error)=> console.error("Error changing settings: ",error));
@@ -130,8 +106,8 @@ return (
     {/* Header Section */}
     <Box 
       sx={{
-        backgroundColor: '#3f51b5', // Blue background
-        padding: '40px 0', // Increased padding for spacing
+        backgroundColor: '#3f51b5', 
+        padding: '40px 0', 
         marginBottom: '30px',
         textAlign: 'center',
         color: 'white',
@@ -140,6 +116,7 @@ return (
       }}
     >
       <Container>
+      
         <Typography 
           variant="h3" 
           component="h1" 
@@ -169,7 +146,7 @@ return (
             position: 'absolute',
             top: '50%',
             right: 20, 
-            transform: 'translateY(-50%)', // Vertically center the toggles
+            transform: 'translateY(-50%)',
             display: 'flex',
             flexDirection: 'column',
             gap: 1,
@@ -199,7 +176,7 @@ return (
             position: 'absolute', 
             top: '50%', 
             right: 20, 
-            transform: 'translateY(-50%)', // Vertically center the button
+            transform: 'translateY(-50%)', 
             display: 'flex', 
             alignItems: 'center' 
           }}

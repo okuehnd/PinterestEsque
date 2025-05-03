@@ -1,28 +1,23 @@
 import React from 'react';
 import {
-  AppBar,
-  Toolbar,
   Typography,
   Container,
+  Button,
   Box,
   Grid,
   Card,
-  CardActionArea,
   CardContent,
   CardMedia,
-  CssBaseline,
   Fab
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
 import { useState, useEffect } from 'react';
 import './App.css'
 // import './style.css'
-import { useNavigate, Link, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { IconButton } from '@mui/material';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
-import axios from 'axios';
 import ManageProfileModal from './ManageProfile';
 import NewPinModal from './newPinModal';
 import CreateBoardModal from './CreateBoardModal';
@@ -30,7 +25,6 @@ import DashboardCustomizeIcon from '@mui/icons-material/DashboardCustomize';
 import PushPinIcon from '@mui/icons-material/PushPin';
 
 function MyBoards() {
-  const [error, setError] = useState('');
   const[boards,setBoards] = useState([]);
   const { boardOwnerId } = useParams();
   const [boardOwnerUsername, setBoardOwnerUsername] = useState([]);
@@ -42,9 +36,6 @@ function MyBoards() {
   const isProfileOwner = parseInt(userId) === parseInt(boardOwnerId);
   
   const [areFriends,setAreFriends] = useState(false);
-  console.log("userId: ",userId)
-  console.log("boardOwnerID: ",boardOwnerId);
-  console.log("IS PROFILE OWNER: ",isProfileOwner)
   const navigate = useNavigate();
 
   useEffect(()=>{
@@ -53,9 +44,6 @@ function MyBoards() {
         .then((data)=>{
             var b = data.boardData
             var bou = data.boardOwnerUsername
-            // pin = JSON.parse(pin)
-            console.log(b)
-            console.log(bou)
             setBoards(b)
             setBoardOwnerUsername(bou);
             setAreFriends(data.areFriends);
@@ -68,9 +56,7 @@ function MyBoards() {
   }
 
   const handleSettingsClick = () =>{
-    console.log("SETTINGS CLICK")
     setIsSettingsModalOpen(true);
-
   };
 
   const handleSettingsModalClose = () =>{
@@ -105,7 +91,7 @@ function MyBoards() {
             return res.json();
         })
         .then((data)=>{
-            console.log(data)
+
         })
         .catch((error)=> console.error("Error unfriending: ",error));
     }
@@ -141,6 +127,24 @@ return (
       borderRadius: 2
     }}>
       <Container>
+        <Box display="flex" justifyContent="flex-end" mb={2}>
+          <Button 
+            onClick={() => navigate(`/following`)} 
+            variant="outlined" 
+            color="primary" 
+            sx={{
+              padding: '10px 20px', 
+              fontSize: '1rem', 
+              marginBottom: '20px', 
+              borderRadius: '30px',  // Rounded corners for buttons
+              boxShadow: 2,
+              textTransform: 'none',
+              color: 'white',  // Prevents uppercasing of button text
+            }}
+          >
+            Following
+          </Button>
+        </Box>
         <Typography variant="h3" component="h1" gutterBottom sx={{ fontWeight: 'bold' }}>
           {boardOwnerUsername}'s Boards
         </Typography>
@@ -223,14 +227,3 @@ return (
 }
 
 export default MyBoards;
-
-
-
-// fetch('http://localhost:8000/api/profile/', {
-//     method: 'GET',
-//     headers: {
-//       'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-//     }
-//   })
-//   .then(response => response.json())
-//   .then(data => console.log(data));

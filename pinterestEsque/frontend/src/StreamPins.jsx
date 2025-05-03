@@ -1,36 +1,19 @@
 import React from 'react';
 import {
-  AppBar,
-  Toolbar,
   Typography,
   Container,
   Box,
   Button,
   Grid,
-  Card,
-  CardActionArea,
-  CardContent,
-  CardMedia,
-  CssBaseline,
-  Modal
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
 import { useState, useEffect } from 'react';
 import './App.css'
 // import './style.css'
-import { useNavigate, Link, useParams } from 'react-router-dom';
-import AddIcon from '@mui/icons-material/Add';
-import { IconButton } from '@mui/material';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import axios from 'axios';
+import { useNavigate, useParams } from 'react-router-dom';
 import PinCard from './PinCard';
-import CommentCard from './CommentCard';
 import PinModal from './PinModal'
 
 function Streams() {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
     const[pins,setPins] = useState([]);
     const [myBoards,setMyBoards] = useState([]);
     const userId = localStorage.getItem('userId');
@@ -39,8 +22,6 @@ function Streams() {
     const [followStreams,setFollowStreams] = useState([]);
     const { streamId } = useParams();
     const streamName = followStreams[streamId]?.streamName;
-    console.log("CURRENT STREAM ID: ",streamId)
-    console.log("CURRENT STREAM NAME: ",streamName)
     const navigate = useNavigate();
     const imageHeight = 140;
   
@@ -58,12 +39,10 @@ function Streams() {
           .then((res) => res.json())
           .then((data)=>{
               var pin = data.pinData
-              // pin = JSON.parse(pin)
-              console.log("GET STREAM PINS:",pin)
               setPins(pin)
           })
           .catch((error)=> console.error("Error fetching pins: ",error));
-    },[])
+    },[streamId])
   
     useEffect(()=>{
       fetch('http://localhost:8000/api/Boards/'+userId+'/'+userId)
@@ -71,9 +50,6 @@ function Streams() {
           .then((data)=>{
               var b = data.boardData
               var bou = data.boardOwnerUsername
-              // pin = JSON.parse(pin)
-              console.log("BOOOOOOOOARDS:",b)
-              console.log(bou)
               setMyBoards(b)
           })
           .catch((error)=> console.error("Error fetching boards: ",error));
@@ -81,7 +57,6 @@ function Streams() {
   
   
     const handlePinClick = (pin) =>{
-      console.log("PIN CLICK")
       setSelectedPin(pin);
       setIsModalOpen(true);
     };
@@ -97,28 +72,45 @@ function Streams() {
       {/* Header Section */}
       <Box 
         sx={{
-          backgroundColor: '#3f51b5', // Blue background
-          padding: '40px 0',  // Increased padding for a more spacious feel
+          backgroundColor: '#3f51b5', 
+          padding: '40px 0',  
           marginBottom: '40px',
           textAlign: 'center',
           color: 'white',
-          borderRadius: 2, // Rounded corners for the box
-          boxShadow: 3, // Slight shadow for depth
+          borderRadius: 2,
+          boxShadow: 3, 
         }}
       >
         <Container>
+          <Box display="flex" justifyContent="flex-end" mb={2}>
+            <Button 
+              onClick={() => navigate(`/user/${localStorage.getItem('userId')}`)} 
+              variant="contained" 
+              color="primary" 
+              sx={{
+                padding: '10px 20px', 
+                fontSize: '1rem', 
+                marginBottom: '2px', 
+                borderRadius: '30px', 
+                boxShadow: 2,
+                textTransform: 'none',  
+              }}
+            >
+              My Boards
+            </Button>
+          </Box>
           <Typography 
             variant="h3" 
             component="h1" 
             gutterBottom 
-            sx={{ fontWeight: 'bold', fontSize: '2.5rem' }}  // Larger title font
+            sx={{ fontWeight: 'bold', fontSize: '2.5rem' }}  
           >
             {streamName}
           </Typography>
           <Typography 
             variant="h6" 
             component="p" 
-            sx={{ fontSize: '1.2rem' }}  // Slightly larger subheading
+            sx={{ fontSize: '1.2rem' }}  
           >
             Explore, discover, and follow your favorite boards!
           </Typography>
@@ -130,36 +122,35 @@ function Streams() {
         <Grid item>
           <Button 
             onClick={() => navigate(`/following`)} 
-            variant="contained" 
+            variant="outlined" 
             color="primary" 
             sx={{
               padding: '10px 20px', 
               fontSize: '1rem', 
               marginBottom: '20px', 
-              borderRadius: '30px',  // Rounded corners for buttons
+              borderRadius: '30px', 
               boxShadow: 2,
-              textTransform: 'none',  // Prevents uppercasing of button text
+              textTransform: 'none',  
             }}
           >
             Following
           </Button>
         </Grid>
-  
         <Grid item>
           <Button 
-            onClick={() => navigate(`/user/${localStorage.getItem('userId')}`)} 
-            variant="contained" 
+            onClick={() => navigate('/search-results')} 
+            variant="outlined" 
             color="primary" 
             sx={{
               padding: '10px 20px', 
               fontSize: '1rem', 
               marginBottom: '20px', 
-              borderRadius: '30px',  // Rounded corners for buttons
+              borderRadius: '30px',  
               boxShadow: 2,
-              textTransform: 'none',  // Prevents uppercasing of button text
+              textTransform: 'none',  
             }}
           >
-            My Boards
+            Search
           </Button>
         </Grid>
   
@@ -168,8 +159,8 @@ function Streams() {
           <Grid item key={index}>
             <Button 
               onClick={() => navigate(`/stream/${stream.streamId}`)} 
-              variant="outlined" 
-              color="secondary" 
+              variant={(parseInt(stream.streamId) === parseInt(streamId))? "contained" : "outlined"}  
+              color="primary" 
               sx={{
                 padding: '10px 20px', 
                 fontSize: '1rem', 

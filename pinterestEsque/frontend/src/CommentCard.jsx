@@ -1,13 +1,11 @@
 import React from 'react';
-import { Card, CardMedia, CardContent, Typography, IconButton, TextField, Button,Box } from '@mui/material';
-import FavoriteIcon from '@mui/icons-material/Favorite';
+import {  Typography, TextField, Button,Box } from '@mui/material';
 import { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import PinCard from './PinCard';
 
 
 const CommentCard = ({ pin, liked }) => {
-    const [isLiked,setIsLiked] = useState(liked);
     const [error,setError] = useState(null);
     const [comments,setComments] = useState([]);
     const userId = localStorage.getItem('userId')
@@ -36,11 +34,8 @@ const CommentCard = ({ pin, liked }) => {
 
     const handleCommentSubmit = () => {
         const userId = localStorage.getItem('userId');
-        const pinId = pin.pinId;  // Assuming pinId is available in pin
+        const pinId = pin.pinId;  
         const boardId = pin.boardId;
-
-
-        console.log("BOARD ID ON SUBMIT:", boardId);
 
         if (!newComment.trim()) {
             setError('Comment cannot be empty!');
@@ -65,7 +60,7 @@ const CommentCard = ({ pin, liked }) => {
             setNewComment('');
             setError(null); 
             setTimeout(() => {
-                setRefreshComments(prev => !prev); // Delay a little before refetch
+                setRefreshComments(prev => !prev); 
             }, 200); 
         })
         .catch((err) => {
@@ -94,7 +89,7 @@ const CommentCard = ({ pin, liked }) => {
               rows={3}
               sx={{
                 marginBottom: '10px',
-                backgroundColor: '#f9f9f9', // Light background for input area
+                backgroundColor: '#f9f9f9',
                 borderRadius: '4px',
               }}
             />
@@ -109,9 +104,9 @@ const CommentCard = ({ pin, liked }) => {
               onClick={handleCommentSubmit}
               sx={{
                 marginTop: '10px',
-                width: '100%', // Full width for the button
+                width: '100%', 
                 backgroundColor: '#3f51b5',
-                '&:hover': { backgroundColor: '#303f9f' }, // Darker shade on hover
+                '&:hover': { backgroundColor: '#303f9f' }, 
               }}
             >
               Submit Comment
@@ -128,10 +123,10 @@ const CommentCard = ({ pin, liked }) => {
                 onClick={() => handleCommenterClick(comment.commenterId)}
                 sx={{
                   cursor: 'pointer',
-                  marginBottom: '8px', // Spacing between comments
-                  fontSize: '1.1rem', // Slightly larger text size
+                  marginBottom: '8px', 
+                  fontSize: '1.1rem', 
                   '&:hover': {
-                    textDecoration: 'underline', // Underline effect on hover
+                    textDecoration: 'underline', 
                   },
                 }}
               >

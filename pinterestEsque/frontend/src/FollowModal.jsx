@@ -1,31 +1,14 @@
 import React from 'react';
 import {
-  AppBar,
-  Toolbar,
   Typography,
-  Container,
   Box,
-  Grid,
-  Card,
-  CardActionArea,
-  CardContent,
-  CardMedia,
-  CssBaseline,
   Modal,
   Fab
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
 import { useState, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
 import './App.css'
-// import './style.css'
-import { useNavigate, Link } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
-import { IconButton } from '@mui/material';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import axios from 'axios';
-import PinCard from './PinCard';
-import CommentCard from './CommentCard';
 import NewStreamModal from './NewStreamModal';
 
 const FormLabel = styled('label')({
@@ -56,7 +39,6 @@ const FollowBoardModal = ({boardId,isFollowing,setIsFollowing,open,onClose}) => 
         .then((res) => res.json())
         .then((data)=>{
             var fs = data.streamData
-            console.log(fs)
             if (fs.length > 0){
                 setFollowStreams(fs);
             }
@@ -94,7 +76,6 @@ const FollowBoardModal = ({boardId,isFollowing,setIsFollowing,open,onClose}) => 
             return response.json();
         })
         .then((data) => {
-            console.log("FOLLOW SELECT CHECKBOX: ",followSelect);
             setIsFollowing(followSelect);
             onClose();
 
