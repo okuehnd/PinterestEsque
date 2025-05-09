@@ -22,9 +22,9 @@ class CustomUser(AbstractUser):
     
 class Board(models.Model):
     user = models.ForeignKey(CustomUser,on_delete = models.CASCADE)
-    boardName = models.CharField(max_length = 255)
+    boardname = models.CharField(max_length = 255)
     description = models.TextField()
-    friendsOnlyComments = models.BooleanField(default = True)
+    friendsonlycomments = models.BooleanField(default = True)
     ts = models.DateTimeField(auto_now_add=True)
 
     #create board
@@ -51,19 +51,20 @@ class Board(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields = ['user','boardName'], name = 'unique_user_board')
+            models.UniqueConstraint(fields = ['user','boardname'], name = 'unique_user_board')
         ]
 
 class Pin(models.Model):
     user = models.ForeignKey(CustomUser,on_delete = models.CASCADE)
-    imageURL = models.URLField(max_length = 200)
-    webURL = models.URLField(max_length = 200,null=True,blank=True)
+    imageurl = models.URLField(max_length = 200)
+    weburl = models.URLField(max_length = 200,null=True,blank=True)
     ts = models.DateTimeField(auto_now_add = True)
 
     #create pin
     @classmethod
     def createPin(cls,userId, iURL,tags: List[str] = [],wURL=None):
-        newPin = cls(user=userId,imageURL=iURL,webURL=wURL)
+        user = CustomUser.objects.get(id=userId)
+        newPin = cls(user=user,imageURL=iURL,webURL=wURL)
         newPin.save()
         for t in tags:
             new_tag = Tag(pin=newPin,tag=t)
@@ -75,14 +76,14 @@ class Pin(models.Model):
     #get pins in order of ....
     @classmethod
     def getPinSorted(cls,keyword,sortMethod):
-
+        keyword=keyword.lower()
+        filteredPosts = cls.objects.filter(tag__tag__icontains=keyword).distinct()
         if sortMethod == "time":
-            filteredPosts = cls.objects.filter(comment__comment__icontains=keyword).distinct()
-            return filteredPosts.order_by('ts')
+            return filteredPosts.order_by('-ts')
 
         if sortMethod == "likes":
-            filteredPosts = cls.objects.filter(comment__comment__icontains=keyword).distinct()
-            return filteredPosts.annotate(likeCount=Count('likes')).order_by('-likeCount')
+            return filteredPosts.annotate(likeCount=Count('likes',distinct=True)).order_by('-likeCount')
+        
 
         #else sort by relevance
     
@@ -122,12 +123,12 @@ class PinToBoard(models.Model):
 
 class FollowStream(models.Model):
     user = models.ForeignKey(CustomUser,on_delete=models.CASCADE)
-    streamName = models.CharField(max_length = 255)
+    streamname = models.CharField(max_length = 255)
     ts = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields = ['user','streamName'], name = 'unique_user_stream')
+            models.UniqueConstraint(fields = ['user','streamname'], name = 'unique_user_stream')
         ]
 
     #create fs
@@ -148,7 +149,7 @@ class Follows(models.Model):
         ]
 
 class Streams(models.Model):
-    followStream = models.ForeignKey(FollowStream,on_delete=models.CASCADE)
+    followstream = models.ForeignKey(FollowStream,on_delete=models.CASCADE)
     board = models.ForeignKey(Board,on_delete=models.CASCADE)
 
     #add board to fs
@@ -165,12 +166,12 @@ class Streams(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields = ['followStream','board'], name = 'unique_fs_board')
+            models.UniqueConstraint(fields = ['followstream','board'], name = 'unique_fs_board')
         ]
 
 class Likes(models.Model):
     user = models.ForeignKey(CustomUser,on_delete=models.CASCADE)
-    pin = models.ForeignKey(Pin,on_delete=models.CASCADE)
+    pin = models.ForeignKey(Pin,on_delete=models.CASCADE,related_name='likes')
     ts = models.DateTimeField(auto_now_add = True)
 
     #like

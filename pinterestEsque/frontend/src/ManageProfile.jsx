@@ -40,7 +40,7 @@ const ManageProfileModal = ({open,onClose}) => {
     const handleDeleteBoard = (board) =>{
         const confirmed = window.confirm(`Are you sure you want to delete ${board.boardName}?`);
         if (confirmed) {
-            fetch('http://localhost:8000/api/DeleteBoard/'+board.boardName)
+            fetch('http://localhost:8000/api/DeleteBoard/'+board.boardId)
             .then((res) => {
                 if (!res.ok){
                     throw new Error(`Failed to delete ${board.boardName}`);

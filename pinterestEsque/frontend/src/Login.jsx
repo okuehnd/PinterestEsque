@@ -41,15 +41,34 @@ function LoginPage() {
   
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <h2>Login</h2>
+    <div style={{ 
+      display: 'flex', 
+      justifyContent: 'center', 
+      alignItems: 'center', 
+      height: '100vh', 
+      backgroundColor: '#f5f5f5' 
+    }}>
+      <form 
+        onSubmit={handleSubmit} 
+        style={{
+          backgroundColor: 'white',
+          padding: '2rem',
+          borderRadius: '10px',
+          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '1rem',
+          width: '300px'
+        }}
+      >
+        <h2 style={{ textAlign: 'center', marginBottom: '1rem' }}>Login</h2>
         <input
           type="text"
           placeholder="Username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           required
+          style={{ padding: '0.5rem', borderRadius: '5px', border: '1px solid #ccc' }}
         />
         <input
           type="password"
@@ -57,13 +76,41 @@ function LoginPage() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
+          style={{ padding: '0.5rem', borderRadius: '5px', border: '1px solid #ccc' }}
         />
-        {error && <p>{error}</p>}
-        <button type="submit">Login</button>
+        {error && (
+          <p style={{ color: 'red', fontSize: '0.9rem', textAlign: 'center' }}>{error}</p>
+        )}
+        <button 
+          type="submit"
+          style={{
+            padding: '0.5rem',
+            borderRadius: '5px',
+            backgroundColor: '#3f51b5',
+            color: 'white',
+            border: 'none',
+            cursor: 'pointer'
+          }}
+        >
+          Login
+        </button>
+        <button
+          type="button"
+          onClick={() => navigate(`/register/`)}
+          style={{
+            padding: '0.5rem',
+            borderRadius: '5px',
+            backgroundColor: '#e0e0e0',
+            border: 'none',
+            cursor: 'pointer'
+          }}
+        >
+          Register
+        </button>
       </form>
-      <button type="register" onClick={() => navigate(`/register/`)}>Register</button>
     </div>
   );
+  
 }
 
 export default LoginPage;

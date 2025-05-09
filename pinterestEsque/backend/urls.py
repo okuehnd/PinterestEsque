@@ -29,5 +29,8 @@ urlpatterns = [
     path('api/DeletePin/<int:userId>/<int:boardId>/<int:pinId>',views.DeletePin,name="DeletePin"),
     path('api/Repin/<int:userId>/<int:pinId>',views.Repin,name="Repin"),
     path('api/GetStreamPins/<int:userId>/<int:streamId>',views.GetStreamPins,name="StreamPins"),
+    path('api/SearchPins/<int:userId>',views.SearchPins,name="SearchPins"),
+    path('api/GetStreamBoards/<int:streamId>',views.GetStreamBoards,name="GetStreamBoards"),
+    path('api/RemoveBoardFromStream/<int:streamId>/<int:boardId>',views.RemoveBoardFromStream,name="RemoveBoardFromStream"),
 
 ]
